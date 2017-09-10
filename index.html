@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Advent Calendar WebVR</title>
+<script src="js/three.min.js"></script>
+<script src="js/VRControls.js"></script>
+<script src="js/VREffect.js"></script>
+<script src="js/OrbitControls.js"></script>
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+canvas {
+    vertical-align: top;
+}
+
+#ctrl {
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+}
+</style>
+</head>
+<body>
+
+    <p id="ctrl"><input type="button" value="VR Mode" id="btn"></p>
+
+<script>
+(function () {
+    'use strict';
+    var camera, scene, renderer, element, orbitControls, vrControls, effect;
+
+    var width  = window.innerWidth;
+    var height = window.innerHeight;
+
+    // カメラ
+    var camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 100000);
+    camera.position.set(10, 10, 10);
+    camera.lookAt(new THREE.Vector3(0, 0, 0))
+
+    // レンダラ
+    renderer = new THREE.WebGLRenderer();
+    renderer.setClearColor(new THREE.Color(0xEEEEEE));
+    renderer.setSize(width, height);
+    renderer.setViewport(0, 0, width, height);
+    renderer.shadowMap.enabled = true;
+
+    document.body.appendChild(renderer.domElement);
+
+    // シーン
+    var scene = new THREE.Scene();
+
+
+    // add subtle ambient lighting
+    var ambientLight = new THREE.AmbientLight(0x0c0c0c);
+    scene.add(ambientLight);
+
+    // add spotlight for the shadows
+    var spotLight = new THREE.SpotLight(0xffffff);
+    spotLight.position.set(-40, 500, -10);
+    spotLight.castShadow = true;
+    scene.add(spotLight);
+
+    // create the ground plane
+    var planeGeometry = new THREE.PlaneGeometry(300, 300);
+    var planeMaterial = new THREE.MeshLambertMaterial({
+      color: 0xcccccc
+    });
+    var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+    plane.receiveShadow = true;
+    // rotate and position the plane
+    plane.rotation.x = -0.5 * Math.PI;
+    plane.position.x = 15;
+    plane.position.y = 0;
+    plane.position.z = 0;
+    // add the plane to the scene
+    scene.add(plane);
+
+    // create a cube
+    var cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
+    var cubeMaterial = new THREE.MeshLambertMaterial({
+      color: 0x86FFF1,
+      //wireframe: true
+    });
+    var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    cube.castShadow = true;
+    // position the cube
+    cube.position.x = 0;
+    cube.position.y = 3;
+    cube.position.z = 0;
+    // add the cube to the scene
+    scene.add(cube);
+
+    // create a sphere
+    var sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
+    var sphereMaterial = new THREE.MeshLambertMaterial({
+      color: 0xFE8AFF,
+      //wireframe: true
+    });
+    var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+    sphere.castShadow = true;
+    // position the sphere
+    sphere.position.x = 0;
+    sphere.position.y = 4;
+    sphere.position.z = 0;
+    // add the sphere to the scene
+    scene.add(sphere);
+
+    // create a sphere2
+    var sphere2Geometry = new THREE.SphereGeometry(4, 20, 20);
+    var sphere2Material = new THREE.MeshLambertMaterial({
+      color: 0xFE8AFF,
+      //wireframe: true
+    });
+    var sphere2 = new THREE.Mesh(sphereGeometry, sphereMaterial);
+    sphere2.castShadow = true;
+    // position the sphere
+    sphere2.position.x = 0;
+    sphere2.position.y = 24;
+    sphere2.position.z = 0;
+    // add the sphere to the scene
+    scene.add(sphere2);
+
+    // create a sphere3
+    var sphere3Geometry = new THREE.SphereGeometry(4, 20, 20);
+    var sphere3Material = new THREE.MeshLambertMaterial({
+      color: 0xFE8AFF,
+      //wireframe: true
+    });
+    var sphere3 = new THREE.Mesh(sphereGeometry, sphereMaterial);
+    sphere3.castShadow = true;
+    // position the sphere
+    sphere3.position.x = 0;
+    sphere3.position.y = 14;
+    sphere3.position.z = 0;
+    // add the sphere to the scene
+    scene.add(sphere3);
+
+
+    // OrbitControls
+    var orbitControls = new THREE.OrbitControls(camera);
+
+    // VRControls
+    var vrControls = new THREE.VRControls(camera);
+
+    // VREffect
+    var effect   = new THREE.VREffect(renderer);
+    effect.setSize(width, height);
+
+    // アニメーションループ
+    var step = 0;
+    (function loop() {
+      cube.rotation.x += 0.1;
+      cube.rotation.y += 0.1;
+      //sphereアニメーション
+      step += 0.02;
+      sphere.position.x = 50 * (Math.cos(step));
+      sphere.position.z = 50 * (Math.sin(step));
+
+      //sphere2アニメーション
+      step += 0.004;
+      sphere2.position.x = 30 * (Math.cos(step));
+      sphere2.position.z = 30 * -(Math.sin(step));
+
+      //sphere2アニメーション
+      step += 0.08;
+      sphere3.position.x = 80 * (Math.cos(step));
+      sphere3.position.z = 80 * -(Math.sin(step));
+
+        vrControls.update();
+        orbitControls.update();
+        effect.render(scene, camera);
+        requestAnimationFrame(loop);
+    }());
+
+    // リサイズ
+    window.addEventListener('resize', function () {
+        width  = window.innerWidth;
+        height = window.innerHeight;
+        effect.setSize(width, height);
+        renderer.setSize(width, height);
+        renderer.setViewport(0, 0, width, height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+    }, false);
+
+    // ボタンクリック
+    document.getElementById('btn').addEventListener('click', function () {
+        effect.setFullScreen(true);
+    }, false);
+
+}());
+</script>
+
+</body>
+</html>
