@@ -133,7 +133,7 @@ function init() {
 
 
     // OrbitControls
-    var orbitControls = new THREE.OrbitControls(camera);
+    //var orbitControls = new THREE.OrbitControls(camera);
 
     // VRControls
     var vrControls = new THREE.VRControls(camera);
@@ -201,7 +201,7 @@ function fullscreen() {
       sphere3.position.z = 80 * -(Math.sin(step));
 
         vrControls.update();
-        orbitControls.update();
+        //orbitControls.update();
         effect.render(scene, camera);
         requestAnimationFrame(animate);
     };
