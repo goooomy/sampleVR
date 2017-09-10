@@ -2,55 +2,47 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>Advent Calendar WebVR</title>
+<title>WebVR</title>
 <script src="js/three.min.js"></script>
 <script src="js/VRControls.js"></script>
 <script src="js/VREffect.js"></script>
 <script src="js/OrbitControls.js"></script>
+<script src="js/DeviceOrientationControls.js"></script>
 <style>
-html, body {
+body {
     margin: 0;
     padding: 0;
-}
-
-canvas {
-    vertical-align: top;
-}
-
-#ctrl {
-    position: fixed;
-    right: 10px;
-    bottom: 10px;
+    overflow: hidden;
 }
 </style>
 </head>
 <body>
-
-    <p id="ctrl"><input type="button" value="VR Mode" id="btn"></p>
-
+    <div id="container"></div>
 <script>
-(function () {
-    'use strict';
+window.onload = function() {
+  init();
+}
+function init() {
     var camera, scene, renderer, element, orbitControls, vrControls, effect;
 
     var width  = window.innerWidth;
     var height = window.innerHeight;
 
-    // カメラ
+    // camera
     var camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 100000);
     camera.position.set(10, 10, 10);
     camera.lookAt(new THREE.Vector3(0, 0, 0))
 
-    // レンダラ
+    // renderer
     renderer = new THREE.WebGLRenderer();
     renderer.setClearColor(new THREE.Color(0xEEEEEE));
     renderer.setSize(width, height);
     renderer.setViewport(0, 0, width, height);
     renderer.shadowMap.enabled = true;
 
-    document.body.appendChild(renderer.domElement);
+    document.getElementById("container").appendChild(renderer.domElement);
 
-    // シーン
+    // scene
     var scene = new THREE.Scene();
 
 
@@ -150,22 +142,35 @@ canvas {
     var effect   = new THREE.VREffect(renderer);
     effect.setSize(width, height);
 
-    // アニメーションループ
+    //DeviceOrientationControls
+    function setOrientationControls(e) {
+      if (!e.alpha) {
+        return;
+      }
+      controls = new THREE.DeviceOrientationControls(camera, true);
+      controls.connect();
+      controls.update();
+      window.removeEventListener('deviceorientation', setOrientationControls, true);
+    }
+    window.addEventListener('deviceorientation', setOrientationControls, true);
+
+    // animation loop
     var step = 0;
-    (function loop() {
+    animate();
+    function animate() {
       cube.rotation.x += 0.1;
       cube.rotation.y += 0.1;
-      //sphereアニメーション
+      // sphere animation
       step += 0.02;
       sphere.position.x = 50 * (Math.cos(step));
       sphere.position.z = 50 * (Math.sin(step));
 
-      //sphere2アニメーション
+      // sphere2 animation
       step += 0.004;
       sphere2.position.x = 30 * (Math.cos(step));
       sphere2.position.z = 30 * -(Math.sin(step));
 
-      //sphere2アニメーション
+      // sphere2 animation
       step += 0.08;
       sphere3.position.x = 80 * (Math.cos(step));
       sphere3.position.z = 80 * -(Math.sin(step));
@@ -173,10 +178,10 @@ canvas {
         vrControls.update();
         orbitControls.update();
         effect.render(scene, camera);
-        requestAnimationFrame(loop);
-    }());
+        requestAnimationFrame(animate);
+    };
 
-    // リサイズ
+    // resize
     window.addEventListener('resize', function () {
         width  = window.innerWidth;
         height = window.innerHeight;
@@ -187,12 +192,7 @@ canvas {
         camera.updateProjectionMatrix();
     }, false);
 
-    // ボタンクリック
-    document.getElementById('btn').addEventListener('click', function () {
-        effect.setFullScreen(true);
-    }, false);
-
-}());
+};
 </script>
 
 </body>
