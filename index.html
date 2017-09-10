@@ -1,224 +1,247 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
-<meta charset="UTF-8">
-<title>WebVR</title>
-<script src="js/three.min.js"></script>
-<script src="js/VRControls.js"></script>
-<script src="js/VREffect.js"></script>
-<script src="js/OrbitControls.js"></script>
-<script src="js/DeviceOrientationControls.js"></script>
-<style>
-body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-}
-</style>
+  <meta charset="UTF-8">
+  <title>WebVR</title>
+  <script src="js/three.min.js"></script>
+  <script src="js/VRControls.js"></script>
+  <script src="js/VREffect.js"></script>
+  <script src="js/OrbitControls.js"></script>
+  <script src="js/DeviceOrientationControls.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+  </style>
 </head>
+
 <body>
-    <div id="container"></div>
-<script>
-window.onload = function() {
-  init();
-}
-function init() {
-    var camera, scene, renderer, element, orbitControls, vrControls, controls, effect;
+  <div id="container"></div>
+  <script>
+    window.onload = function() {
+      init();
+    }
 
-    var width  = window.innerWidth;
-    var height = window.innerHeight;
+    function init() {
+      var camera, scene, renderer, element, orbitControls, vrControls, controls, effect;
 
-    // camera
-    var camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 100000);
-    camera.position.set(10, 10, 10);
-    camera.lookAt(new THREE.Vector3(0, 0, 0))
+      var width = window.innerWidth;
+      var height = window.innerHeight;
 
-    // renderer
-    renderer = new THREE.WebGLRenderer();
-    renderer.setClearColor(new THREE.Color(0xEEEEEE));
-    renderer.setSize(width, height);
-    renderer.setViewport(0, 0, width, height);
-    renderer.shadowMap.enabled = true;
+      // camera
+      var camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 100000);
+      camera.position.set(10, 10, 10);
+      camera.lookAt(new THREE.Vector3(0, 0, 0))
 
-    document.getElementById("container").appendChild(renderer.domElement);
+      // renderer
+      renderer = new THREE.WebGLRenderer();
+      renderer.setClearColor(new THREE.Color(0xEEEEEE));
+      renderer.setSize(width, height);
+      renderer.setViewport(0, 0, width, height);
+      renderer.shadowMap.enabled = true;
 
-    // scene
-    var scene = new THREE.Scene();
+      document.getElementById("container").appendChild(renderer.domElement);
 
-
-    // add subtle ambient lighting
-    var ambientLight = new THREE.AmbientLight(0x0c0c0c);
-    scene.add(ambientLight);
-
-    // add spotlight for the shadows
-    var spotLight = new THREE.SpotLight(0xffffff);
-    spotLight.position.set(-40, 500, -10);
-    spotLight.castShadow = true;
-    scene.add(spotLight);
-
-    // create the ground plane
-    var planeGeometry = new THREE.PlaneGeometry(300, 300);
-    var planeMaterial = new THREE.MeshLambertMaterial({
-      color: 0xcccccc
-    });
-    var plane = new THREE.Mesh(planeGeometry, planeMaterial);
-    plane.receiveShadow = true;
-    // rotate and position the plane
-    plane.rotation.x = -0.5 * Math.PI;
-    plane.position.x = 15;
-    plane.position.y = 0;
-    plane.position.z = 0;
-    // add the plane to the scene
-    scene.add(plane);
-
-    // create a cube
-    var cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
-    var cubeMaterial = new THREE.MeshLambertMaterial({
-      color: 0x86FFF1,
-      //wireframe: true
-    });
-    var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-    cube.castShadow = true;
-    // position the cube
-    cube.position.x = 0;
-    cube.position.y = 3;
-    cube.position.z = 0;
-    // add the cube to the scene
-    scene.add(cube);
-
-    // create a sphere
-    var sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
-    var sphereMaterial = new THREE.MeshLambertMaterial({
-      color: 0xFE8AFF,
-      //wireframe: true
-    });
-    var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-    sphere.castShadow = true;
-    // position the sphere
-    sphere.position.x = 0;
-    sphere.position.y = 4;
-    sphere.position.z = 0;
-    // add the sphere to the scene
-    scene.add(sphere);
-
-    // create a sphere2
-    var sphere2Geometry = new THREE.SphereGeometry(4, 20, 20);
-    var sphere2Material = new THREE.MeshLambertMaterial({
-      color: 0xFE8AFF,
-      //wireframe: true
-    });
-    var sphere2 = new THREE.Mesh(sphereGeometry, sphereMaterial);
-    sphere2.castShadow = true;
-    // position the sphere
-    sphere2.position.x = 0;
-    sphere2.position.y = 24;
-    sphere2.position.z = 0;
-    // add the sphere to the scene
-    scene.add(sphere2);
-
-    // create a sphere3
-    var sphere3Geometry = new THREE.SphereGeometry(4, 20, 20);
-    var sphere3Material = new THREE.MeshLambertMaterial({
-      color: 0xFE8AFF,
-      //wireframe: true
-    });
-    var sphere3 = new THREE.Mesh(sphereGeometry, sphereMaterial);
-    sphere3.castShadow = true;
-    // position the sphere
-    sphere3.position.x = 0;
-    sphere3.position.y = 14;
-    sphere3.position.z = 0;
-    // add the sphere to the scene
-    scene.add(sphere3);
+      // scene
+      var scene = new THREE.Scene();
 
 
-    // OrbitControls
-    var orbitControls = new THREE.OrbitControls(camera);
+      // add subtle ambient lighting
+      var ambientLight = new THREE.AmbientLight(0x0c0c0c);
+      scene.add(ambientLight);
 
-    // VRControls
-    //var vrControls = new THREE.VRControls(camera);
+      // add spotlight for the shadows
+      var spotLight = new THREE.SpotLight(0xffffff);
+      spotLight.position.set(-40, 500, -10);
+      spotLight.castShadow = true;
+      scene.add(spotLight);
 
-    // VREffect
-    var effect   = new THREE.VREffect(renderer);
-    effect.setSize(width, height);
+      // create the ground plane
+      var planeGeometry = new THREE.PlaneGeometry(300, 300);
+      var planeMaterial = new THREE.MeshLambertMaterial({
+        color: 0xcccccc
+      });
+      var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+      plane.receiveShadow = true;
+      // rotate and position the plane
+      plane.rotation.x = -0.5 * Math.PI;
+      plane.position.x = 15;
+      plane.position.y = 0;
+      plane.position.z = 0;
+      // add the plane to the scene
+      scene.add(plane);
 
-    //DeviceOrientationControls
-    // スマートフォンの場合はジャイロセンサーでの操作へ変更
-window.addEventListener("deviceorientation", setOrientationControls, true);
+      // create a cube
+      var cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
+      var cubeMaterial = new THREE.MeshLambertMaterial({
+        color: 0x86FFF1,
+        //wireframe: true
+      });
+      var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+      cube.castShadow = true;
+      // position the cube
+      cube.position.x = 0;
+      cube.position.y = 3;
+      cube.position.z = 0;
+      // add the cube to the scene
+      scene.add(cube);
 
-/**
- * ジャイロセンサーでの操作へ変更します。
- */
-function setOrientationControls(e) {
-  if (!e.alpha) {
-    return;
-  }
+      // create a sphere
+      var sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
+      var sphereMaterial = new THREE.MeshLambertMaterial({
+        color: 0xFE8AFF,
+        //wireframe: true
+      });
+      var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+      sphere.castShadow = true;
+      // position the sphere
+      sphere.position.x = 0;
+      sphere.position.y = 4;
+      sphere.position.z = 0;
+      // add the sphere to the scene
+      scene.add(sphere);
 
-  controls = new THREE.DeviceOrientationControls(camera, true);
-  controls.connect();
-  controls.update();
+      // create a sphere2
+      var sphere2Geometry = new THREE.SphereGeometry(4, 20, 20);
+      var sphere2Material = new THREE.MeshLambertMaterial({
+        color: 0xFE8AFF,
+        //wireframe: true
+      });
+      var sphere2 = new THREE.Mesh(sphereGeometry, sphereMaterial);
+      sphere2.castShadow = true;
+      // position the sphere
+      sphere2.position.x = 0;
+      sphere2.position.y = 24;
+      sphere2.position.z = 0;
+      // add the sphere to the scene
+      scene.add(sphere2);
 
-  element.addEventListener("click", fullscreen, false);
-
-  window.removeEventListener("deviceorientation", setOrientationControls, true);
-}
-
-/**
- * フルスクリーン表示へ切り替えます。
- */
-function fullscreen() {
-  if (container.requestFullscreen) {
-    container.requestFullscreen();
-  } else if (container.msRequestFullscreen) {
-    container.msRequestFullscreen();
-  } else if (container.mozRequestFullScreen) {
-    container.mozRequestFullScreen();
-  } else if (container.webkitRequestFullscreen) {
-    container.webkitRequestFullscreen();
-  }
-}
+      // create a sphere3
+      var sphere3Geometry = new THREE.SphereGeometry(4, 20, 20);
+      var sphere3Material = new THREE.MeshLambertMaterial({
+        color: 0xFE8AFF,
+        //wireframe: true
+      });
+      var sphere3 = new THREE.Mesh(sphereGeometry, sphereMaterial);
+      sphere3.castShadow = true;
+      // position the sphere
+      sphere3.position.x = 0;
+      sphere3.position.y = 14;
+      sphere3.position.z = 0;
+      // add the sphere to the scene
+      scene.add(sphere3);
 
 
-    // animation loop
-    var step = 0;
-    animate();
-    function animate() {
-      cube.rotation.x += 0.1;
-      cube.rotation.y += 0.1;
-      // sphere animation
-      step += 0.02;
-      sphere.position.x = 50 * (Math.cos(step));
-      sphere.position.z = 50 * (Math.sin(step));
+      // OrbitControls
+      //var orbitControls = new THREE.OrbitControls(camera);
 
-      // sphere2 animation
-      step += 0.004;
-      sphere2.position.x = 30 * (Math.cos(step));
-      sphere2.position.z = 30 * -(Math.sin(step));
+      // VRControls
+      //var vrControls = new THREE.VRControls(camera);
 
-      // sphere2 animation
-      step += 0.08;
-      sphere3.position.x = 80 * (Math.cos(step));
-      sphere3.position.z = 80 * -(Math.sin(step));
+      // VREffect
+      var effect = new THREE.VREffect(renderer);
+      effect.setSize(width, height);
+
+      //DeviceOrientationControls
+      // スマートフォンの場合はジャイロセンサーでの操作へ変更
+      /*window.addEventListener("deviceorientation", setOrientationControls, true);
+
+      function setOrientationControls(e) {
+        if (!e.alpha) {
+          return;
+        }
+
+        controls = new THREE.DeviceOrientationControls(camera, true);
+        controls.connect();
+        controls.update();
+
+        element.addEventListener("click", fullscreen, false);
+
+        window.removeEventListener("deviceorientation", setOrientationControls, true);
+      }*/
+      controls = new THREE.OrbitControls(camera, element);
+      controls.rotateUp(Math.PI / 4);
+      controls.target.set(
+        camera.position.x + 0.1,
+        camera.position.y,
+        camera.position.z
+      );
+      controls.noZoom = true;
+      controls.noPan = true;
+
+      function setOrientationControls(e) {
+        if (!e.alpha) {
+          return;
+        }
+
+        controls = new THREE.DeviceOrientationControls(camera, true);
+        controls.connect();
+        controls.update();
+
+        element.addEventListener('click', fullscreen, false);
+
+        window.removeEventListener('deviceorientation', setOrientationControls, true);
+      }
+      window.addEventListener('deviceorientation', setOrientationControls, true);
+
+      function fullscreen() {
+        if (container.requestFullscreen) {
+          container.requestFullscreen();
+        } else if (container.msRequestFullscreen) {
+          container.msRequestFullscreen();
+        } else if (container.mozRequestFullScreen) {
+          container.mozRequestFullScreen();
+        } else if (container.webkitRequestFullscreen) {
+          container.webkitRequestFullscreen();
+        }
+      }
+
+
+      // animation loop
+      var step = 0;
+      animate();
+
+      function animate() {
+        cube.rotation.x += 0.1;
+        cube.rotation.y += 0.1;
+        // sphere animation
+        step += 0.02;
+        sphere.position.x = 50 * (Math.cos(step));
+        sphere.position.z = 50 * (Math.sin(step));
+
+        // sphere2 animation
+        step += 0.004;
+        sphere2.position.x = 30 * (Math.cos(step));
+        sphere2.position.z = 30 * -(Math.sin(step));
+
+        // sphere2 animation
+        step += 0.08;
+        sphere3.position.x = 80 * (Math.cos(step));
+        sphere3.position.z = 80 * -(Math.sin(step));
 
         //vrControls.update();
-        orbitControls.update();
+        controls.update();
         effect.render(scene, camera);
         requestAnimationFrame(animate);
-    };
+      };
 
-    // resize
-    window.addEventListener('resize', function () {
-        width  = window.innerWidth;
+      // resize
+      window.addEventListener('resize', function() {
+        width = window.innerWidth;
         height = window.innerHeight;
         effect.setSize(width, height);
         renderer.setSize(width, height);
         renderer.setViewport(0, 0, width, height);
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
-    }, false);
+      }, false);
 
-};
-</script>
+    };
+  </script>
 
 </body>
+
 </html>
